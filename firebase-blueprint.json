@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "Account": {
+      "title": "Chart of Accounts",
+      "description": "Master data for accounts in the system.",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string", "description": "Account code (e.g., 1101)" },
+        "name": { "type": "string", "description": "Account name" },
+        "category": { "type": "string", "enum": ["Asset", "Liability", "NetAsset", "Revenue", "Expense"] },
+        "fundType": { "type": "string", "enum": ["Zakat", "Infaq", "Amil", "General"] },
+        "description": { "type": "string" }
+      },
+      "required": ["code", "name", "category", "fundType"]
+    },
+    "Transaction": {
+      "title": "Journal Transaction",
+      "description": "A header for a set of double-entry journal items.",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date-time" },
+        "description": { "type": "string" },
+        "reference": { "type": "string" },
+        "total": { "type": "number", "description": "Total debit amount" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["date", "description", "total", "createdBy"]
+    },
+    "JournalEntry": {
+      "title": "Journal Entry Line",
+      "description": "An individual debit or credit line within a transaction.",
+      "type": "object",
+      "properties": {
+        "transactionId": { "type": "string" },
+        "accountId": { "type": "string" },
+        "accountName": { "type": "string" },
+        "accountCode": { "type": "string" },
+        "debit": { "type": "number" },
+        "credit": { "type": "number" },
+        "fundType": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" }
+      },
+      "required": ["transactionId", "accountId", "debit", "credit", "date"]
+    },
+    "Budget": {
+      "title": "Account Budget",
+      "description": "Budget allocation for a specific account.",
+      "type": "object",
+      "properties": {
+        "accountId": { "type": "string" },
+        "period": { "type": "string", "description": "Period (e.g., 2024)" },
+        "amount": { "type": "number" }
+      },
+      "required": ["accountId", "period", "amount"]
+    }
+  },
+  "firestore": {
+    "/accounts": {
+      "schema": "Account",
+      "description": "The chart of accounts."
+    },
+    "/transactions": {
+      "schema": "Transaction",
+      "description": "The collection of accounting transactions."
+    },
+    "/transactions/{transactionId}/entries": {
+      "schema": "JournalEntry",
+      "description": "Line items for a specific transaction."
+    },
+    "/budgets": {
+      "schema": "Budget",
+      "description": "Budget definitions."
+    }
+  }
+}
